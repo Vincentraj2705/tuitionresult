@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SK Tuition Center</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+font-family:system-ui, -apple-system, Arial;
+background:#eef2ff;
+margin:0;
+padding:0;
+color:#333;
+}
+
+.container{
+max-width:450px;
+margin:auto;
+padding:18px;
+}
+
+.title{
+text-align:center;
+font-size:24px;
+font-weight:700;
+margin-bottom:12px;
+color:#2436a3;
+}
+
+.card{
+background:white;
+padding:16px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
+margin-bottom:16px;
+}
+
+.testno{
+text-align:center;
+font-size:18px;
+margin:12px 0;
+font-weight:600;
+}
+
+button{
+width:100%;
+padding:14px;
+background:#4a6cff;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+margin-top:12px;
+cursor:pointer;
+font-weight:600;
+}
+
+button:hover{
+background:#364fd6;
+}
+
+input{
+width:100%;
+padding:14px;
+margin-top:12px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:15px;
+}
+
+input:focus{
+outline:none;
+border-color:#4a6cff;
+}
+
+h3{
+margin-top:0;
+font-size:18px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:12px;
+font-size:13px;
+}
+
+th,td{
+border:1px solid #eee;
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#4a6cff;
+color:white;
+}
+
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:100;
+}
+
+.loading{
+background:white;
+padding:22px;
+border-radius:12px;
+font-size:18px;
+font-weight:600;
+text-align:center;
+}
+
+#welcomePopup{
+color:white;
+font-size:22px;
+font-weight:600;
+text-align:center;
+}
+
+.resultName{
+font-size:20px;
+font-weight:700;
+text-align:center;
+margin-bottom:10px;
+}
+
+#error{
+margin-top:10px;
+font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="popup" id="welcomePopup">
+Welcome to<br>SK Tuition Center
+</div>
+
+<div class="container">
+
+<div class="title">SK TUITION CENTER</div>
+
+<!-- HOME PAGE -->
+
+<div id="homePage">
+
+<div class="card">
+
+<div class="testno">Test No (1)</div>
+
+<button onclick="showLogin()">View Result</button>
+
+</div>
+
+<div class="card">
+
+<h3>Test Schedule</h3>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Day</th>
+<th>Portion</th>
+</tr>
+
+<tr>
+<td>17-03-2026</td>
+<td>Tue</td>
+<td>Unit 1&5</td>
+</tr>
+
+<tr>
+<td>18-03-2026</td>
+<td>Wed</td>
+<td>Unit 2&6</td>
+</tr>
+
+<tr>
+<td>19-03-2026</td>
+<td>Thu</td>
+<td>Unit 3&8</td>
+</tr>
+
+<tr>
+<td>20-03-2026</td>
+<td>Fri</td>
+<td>Unit 4&7</td>
+</tr>
+
+<tr>
+<td>21-03-2026</td>
+<td>Sat</td>
+<td>Full Test-1</td>
+</tr>
+
+<tr>
+<td>22-03-2026</td>
+<td>Sun</td>
+<td>Full Test-2</td>
+</tr>
+
+<tr>
+<td>23-03-2026</td>
+<td>Mon</td>
+<td>Full Test-3</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- LOGIN PAGE -->
+
+<div id="loginPage" style="display:none">
+
+<div class="card">
+
+<h3>Enter Details</h3>
+
+<input id="regno" placeholder="Register Number">
+
+<input id="dob" placeholder="DOB (YYYY-MM-DD)">
+
+<button onclick="checkResult()">Submit</button>
+
+<p id="error" style="color:red"></p>
+
+</div>
+
+</div>
+
+<!-- RESULT PAGE -->
+
+<div id="resultPage" style="display:none">
+
+<div class="card">
+
+<div id="studentName" class="resultName"></div>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Test</th>
+<th>Subject</th>
+<th>Mark</th>
+</tr>
+
+<tr>
+<td>17-03-2026</td>
+<td>1</td>
+<td>Maths</td>
+<td id="mark"></td>
+</tr>
+
+</table>
+
+<button onclick="downloadScript()">See Answer Script</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="popup" id="loadingPopup" style="display:none">
+<div class="loading">
+Fetching Result...
+</div>
+</div>
+
+<script>
+
+setTimeout(()=>{
+document.getElementById("welcomePopup").style.display="none";
+},2000);
+
+const students={
+
+"SKTCM1001":{
+name:"BHAVANI R",
+dob:"2010-11-22",
+mark:"19 / 20"
+},
+
+"SKTCM1002":{
+name:"MONIKA R",
+dob:"2010-03-06",
+mark:"17 / 20"
+}
+
+};
+
+let currentReg="";
+
+function showLogin(){
+
+document.getElementById("homePage").style.display="none";
+document.getElementById("loginPage").style.display="block";
+
+}
+
+function checkResult(){
+
+let reg=document.getElementById("regno").value.trim();
+let dob=document.getElementById("dob").value.trim();
+
+if(students[reg] && students[reg].dob===dob){
+
+currentReg=reg;
+
+document.getElementById("loginPage").style.display="none";
+document.getElementById("loadingPopup").style.display="flex";
+
+setTimeout(()=>{
+
+document.getElementById("loadingPopup").style.display="none";
+showResult(reg);
+
+},2000);
+
+}else{
+
+document.getElementById("error").innerText="Invalid Register Number or DOB";
+
+}
+
+}
+
+function showResult(reg){
+
+document.getElementById("resultPage").style.display="block";
+
+document.getElementById("studentName").innerText=students[reg].name;
+document.getElementById("mark").innerText=students[reg].mark;
+
+}
+
+function downloadScript(){
+
+window.location.href=currentReg+".pdf";
+
+}
+
+</script>
+
+</body>
+</html>
